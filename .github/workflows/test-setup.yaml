@@ -1,0 +1,53 @@
+name: Test Setup Action
+on:
+  push:
+    paths:
+      - "setup/**"
+      - "shared/**"
+      - ".github/workflows/test-setup.yml"
+  pull_request:
+    paths:
+      - "setup/**"
+      - "shared/**"
+      - ".github/workflows/test-setup.yml"
+
+jobs:
+  test-setup:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cache: [true, false]
+    name: Test setup (cache=${{ matrix.cache }})
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: ./setup
+        id: setup
+        with:
+          cache: ${{ matrix.cache }}
+
+      - name: Verify installation
+        env:
+          INSTALLED_VERSION: ${{ steps.setup.output.version }}
+        run: |
+          zizmor --version
+          echo "Installed version: ${INSTALLED_VERSION}"
+
+      # Test cache hit on second run
+      - if: matrix.cache
+        uses: ./setup
+        id: setup-cached
+        with:
+          cache: true
+
+      - if: matrix.cache
+        name: Verify cache effectiveness
+        env:
+          SETUP_VERSION: ${{ steps.setup.outputs.version }}
+          SETUP_CACHED_VERSION: ${{ steps.setup-cached.outputs.version }}
+        run: |
+          echo "First run version: ${SETUP_VERSION}"
+          echo "Cached run version: ${SETUP_CACHED_VERSION}"
+          test "${SETUP_VERSION}" = "${SETUP_CACHED_VERSION}"

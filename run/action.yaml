@@ -1,0 +1,21 @@
+name: "Run Zizmor"
+description: "Runs zizmor on the repository"
+
+inputs:
+  github-token:
+    description: "GitHub token for authentication"
+    required: true
+  working-directory:
+    description: "Directory to run zizmor in"
+    required: false
+    default: "."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run zizmor 🌈
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      working-directory: ${{ inputs.working-directory }}
+      run: zizmor .

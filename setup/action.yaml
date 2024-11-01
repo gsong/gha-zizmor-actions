@@ -1,0 +1,41 @@
+name: "Setup Zizmor"
+description: "Installs the latest version of zizmor with caching support"
+
+inputs:
+  cache:
+    description: "Whether to use cargo cache"
+    required: false
+    default: "true"
+
+outputs:
+  version:
+    description: "Installed version of zizmor"
+    value: ${{ steps.zizmor-version.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get latest zizmor version
+      id: zizmor-version
+      shell: bash
+      run: ${{ github.action_path }}/../shared/scripts/version.sh
+
+    - name: Setup zizmor cargo cache
+      if: inputs.cache == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/bin
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-zizmor-${{ steps.zizmor-version.outputs.version }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-zizmor-
+          ${{ runner.os }}-cargo-
+
+    - name: Install zizmor
+      shell: bash
+      env:
+        LATEST_VERSION: ${{ steps.zizmor-version.outputs.version }}
+      run: ${{ github.action_path }}/../shared/scripts/install.sh

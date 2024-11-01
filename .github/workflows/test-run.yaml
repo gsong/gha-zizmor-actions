@@ -1,0 +1,25 @@
+name: Test Run Action
+on:
+  push:
+    paths:
+      - "run/**"
+      - ".github/workflows/test-run.yml"
+  pull_request:
+    paths:
+      - "run/**"
+      - ".github/workflows/test-run.yml"
+
+jobs:
+  test-run:
+    runs-on: ubuntu-latest
+    name: Test run
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: ./setup
+
+      - uses: ./run
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
