@@ -1,6 +1,6 @@
 # Zizmor GitHub Actions
 
-Official GitHub Actions for working with [zizmor](https://woodruffw.github.io/zizmor/) in your workflows.
+GitHub Actions for working with [zizmor](https://woodruffw.github.io/zizmor/) in your workflows.
 
 ## Available Actions
 
@@ -12,7 +12,7 @@ Installs and configures zizmor with caching support:
 - uses: gsong/gha-zizmor-actions/setup@v1
   with:
     # Optional: disable cargo caching
-    cache: true
+    cache: false
 ```
 
 ### run
@@ -39,6 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: gsong/gha-zizmor-actions/setup@v1
 
@@ -53,7 +55,6 @@ This repository follows semantic versioning:
 
 - Major version tags (e.g., `v1`, `v2`) point to the latest minor/patch release in that major version
 - Specific versions (e.g., `v1.2.3`) are also available
-- Beta features are released under the `beta` tag
 
 We recommend using major version tags (e.g., `@v1`) to automatically receive compatible updates.
 
@@ -61,7 +62,7 @@ We recommend using major version tags (e.g., `@v1`) to automatically receive com
 
 | Action Version | Minimum Zizmor Version |
 | -------------- | ---------------------- |
-| v1.x.x         | 0.5.0                  |
+| v1.x.x         | 0.1.0                  |
 
 ## Contributing
 
